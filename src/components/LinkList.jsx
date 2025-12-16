@@ -44,6 +44,12 @@ const LinkList = ({ links = [], onDownloadAll, processing }) => {
                 <td className="col-row">#{link.row}</td>
                 <td className="col-name">
                   <span className="file-name" title={link.fileName}>{link.fileName}</span>
+                  {link.method === 'fallback' && (
+                    <span className="meta-warning" title="Could not rename due to browser security (Private File)">⚠️ Original Name</span>
+                  )}
+                  {link.method === 'rename' && (
+                    <span className="meta-success">✓ Renamed</span>
+                  )}
                 </td>
                 <td className="col-link">
                   <div className="link-info">

@@ -9,11 +9,13 @@ function App() {
   const [links, setLinks] = useState([]);
   const [processing, setProcessing] = useState(false);
   const [errorHeader, setErrorHeader] = useState(null);
+  const [popupBlocked, setPopupBlocked] = useState(false);
 
   const handleFileProcess = async (file) => {
     try {
       setProcessing(true);
       setErrorHeader(null);
+      setPopupBlocked(false);
       const parsedLinks = await parseFile(file);
       setLinks(parsedLinks);
       if (parsedLinks.length === 0) {
@@ -29,34 +31,36 @@ function App() {
 
   const handleDownloadAll = async () => {
     setProcessing(true);
+    setPopupBlocked(false);
     
-    // Process sequentially with delay to avoid browser blocking
+    // Process sequentially
     for (let i = 0; i < links.length; i++) {
         const link = links[i];
-      if (link.status === 'success') continue; // Skip already downloaded
+      if (link.status === 'success') continue; 
 
-      // Update status to processing
       setLinks(prev => prev.map((l, idx) => idx === i ? { ...l, status: 'processing' } : l));
 
-      // Attempt download
       try {
-        // Attempt to downlod using blob to rename the file.
-        // If it fails (due to CORS/private file), fallback to opening in new tab.
-        const success = await downloadFile(link.downloadUrl, link.fileName);
+        const result = await downloadFile(link.downloadUrl, link.fileName);
         
-        if (!success) {
-          // Fallback
-          window.open(link.downloadUrl, '_blank');
+        if (result.success) {
+             setLinks(prev => prev.map((l, idx) => idx === i ? { 
+               ...l, 
+               status: 'success',
+               method: result.method 
+             } : l));
+        } else {
+             // Should not happen as downloader returns success:true even on fallback
+             setLinks(prev => prev.map((l, idx) => idx === i ? { ...l, status: 'error' } : l));
         }
-        
-        // We assume success if no error thrown by window.open or if downloadFile returned true
-        setLinks(prev => prev.map((l, idx) => idx === i ? { ...l, status: 'success' } : l));
-        
+
       } catch (e) {
         setLinks(prev => prev.map((l, idx) => idx === i ? { ...l, status: 'error' } : l));
       }
 
-      // Wait 1.5s before next one to manage browser load/rate limits
+      // Check if we need to pause? 
+      // Actually, standard window.open in loop works IF popups allowed.
+      // We'll trust the delay.
       if (i < links.length - 1) {
         await new Promise(resolve => setTimeout(resolve, 1500));
       }
@@ -80,6 +84,10 @@ function App() {
             {errorHeader}
           </div>
         )}
+        
+        <div style={{ textAlign: 'center', opacity: 0.8, fontSize: '0.9rem', marginBottom: '1rem', marginTop: '1rem' }}>
+             ⚠️ <strong>Important:</strong> To download multiple files, you MUST <strong>Allow Popups & Redirects</strong> for this site in your browser address bar.
+        </div>
 
         {links.length > 0 && (
           <LinkList 

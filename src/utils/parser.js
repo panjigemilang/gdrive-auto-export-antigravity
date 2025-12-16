@@ -33,7 +33,15 @@ const extractDriveId = (url) => {
 
 const cleanDateForFilename = (dateStr) => {
   if (!dateStr) return '';
-  // Remove slashes: 7/16/2025 -> 7162025
+  const d = new Date(dateStr);
+  if (!isNaN(d.getTime())) {
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    const yyyy = d.getFullYear();
+    // User requested format: DDMMYYYY (e.g. 16072025)
+    return `${dd}${mm}${yyyy}`;
+  }
+  // Fallback
   return String(dateStr).replace(/[\/\-]/g, '');
 };
 

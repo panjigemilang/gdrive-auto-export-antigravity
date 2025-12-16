@@ -149,3 +149,16 @@
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+.meta-warning {
+  font-size: 0.7rem;
+  color: #fbbf24;
+  display: inline-block;
+  margin-top: 2px;
+}
+
+.meta-success {
+  font-size: 0.7rem;
+  color: #10b981;
+  display: inline-block;
+  margin-top: 2px;
+}
