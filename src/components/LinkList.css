@@ -37,6 +37,7 @@
   color: var(--text-secondary);
   font-weight: 500;
   border-bottom: 1px solid var(--border-color);
+  white-space: nowrap;
 }
 
 .links-table td {
@@ -55,13 +56,27 @@
 }
 
 .col-row {
-  width: 80px;
+  width: 60px;
   color: var(--text-secondary);
   font-family: monospace;
 }
 
+.col-name {
+  min-width: 250px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.file-name {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 300px;
+}
+
 .col-link {
-  min-width: 300px;
+  max-width: 200px;
 }
 
 .col-action {
@@ -75,11 +90,6 @@
   gap: 0.25rem;
 }
 
-.file-id {
-  font-weight: 500;
-  color: var(--accent-primary);
-}
-
 .original-link {
   color: var(--text-secondary);
   text-decoration: none;
@@ -91,7 +101,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  max-width: 400px;
+  max-width: 100%;
 }
 
 .original-link:hover {

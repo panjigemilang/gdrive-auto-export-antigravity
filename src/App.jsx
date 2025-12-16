@@ -40,37 +40,23 @@ function App() {
 
       // Attempt download
       try {
-        // Use window.open for Google Drive links as they are often cross-origin redirects
-        // which iframe download approach struggles with (X-Frame-Options)
-        // However, popups need to be allowed.
-        // Let's try the iframe approach first (defined in downloader), fallback to new tab if needed?
-        // Actually for this v1, simple window.open is more reliable for Drive.
-        // We will use the custom downloader function which we can tune.
+        // Attempt to downlod using blob to rename the file.
+        // If it fails (due to CORS/private file), fallback to opening in new tab.
+        const success = await downloadFile(link.downloadUrl, link.fileName);
         
-        // Check if we want to use the iframe trick? 
-        // Google Drive export links usually enforce X-Frame-Options: SAMEORIGIN
-        // So iframe usually fails silently.
-        // Better to just open in new tab.
-        // But doing this in a loop triggers popup blocker.
-        // We can warn the user.
+        if (!success) {
+          // Fallback
+          window.open(link.downloadUrl, '_blank');
+        }
         
-        // Let's try a hybrid:
-        // Use the 'downloadFile' function we made.
-        // If it's the iframe one, it returns undefined.
-        
-        // For safety/compatibility with the "Auto" request, I will use window.open in the loop
-        // and hope the user allows popups.
-        window.open(link.downloadUrl, '_blank');
-        
-        // We can't easily know if it succeeded cross-origin, so we assume success if no crash.
-        // Update status to success
+        // We assume success if no error thrown by window.open or if downloadFile returned true
         setLinks(prev => prev.map((l, idx) => idx === i ? { ...l, status: 'success' } : l));
         
       } catch (e) {
         setLinks(prev => prev.map((l, idx) => idx === i ? { ...l, status: 'error' } : l));
       }
 
-      // Wait 1.5s before next one
+      // Wait 1.5s before next one to manage browser load/rate limits
       if (i < links.length - 1) {
         await new Promise(resolve => setTimeout(resolve, 1500));
       }

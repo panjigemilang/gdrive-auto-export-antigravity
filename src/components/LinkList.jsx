@@ -27,7 +27,8 @@ const LinkList = ({ links = [], onDownloadAll, processing }) => {
             <tr>
               <th>Status</th>
               <th>Row</th>
-              <th>File ID / Link</th>
+              <th>Target Name</th>
+              <th>Original Link</th>
               <th>Action</th>
             </tr>
           </thead>
@@ -41,9 +42,11 @@ const LinkList = ({ links = [], onDownloadAll, processing }) => {
                   {link.status === 'error' && <span className="icon-error">!</span>}
                 </td>
                 <td className="col-row">#{link.row}</td>
+                <td className="col-name">
+                  <span className="file-name" title={link.fileName}>{link.fileName}</span>
+                </td>
                 <td className="col-link">
                   <div className="link-info">
-                    <span className="file-id">{link.id}</span>
                     <a href={link.originalUrl} target="_blank" rel="noopener noreferrer" className="original-link">
                       {link.originalUrl} <ExternalLink size={12} />
                     </a>
