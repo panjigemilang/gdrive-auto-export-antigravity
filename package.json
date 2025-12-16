@@ -1,5 +1,6 @@
 {
   "name": "gdrive-auto-export-antigravity",
+  "description": "Auto export Google Drive links from CSV or Excel file",
   "private": true,
   "version": "0.0.0",
   "type": "module",
